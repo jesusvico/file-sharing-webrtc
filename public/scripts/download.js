@@ -1,11 +1,12 @@
-import {generateKey, keyToString, getPeerId, sendMessage} from '/utils.js';
+import { generateKey, keyToString, getPeerId, sendMessage } from '/utils.js';
 
 let peerConnection, dataChannel, remoteId;
 let privateKey, privateKeyString, peerId;
 let fileName, downloadedMessage = [];
 
 // ==================== WEBSOCKET ====================
-const socket = new WebSocket('wss://localhost:8888');
+const location = document.location
+const socket = new WebSocket(`wss://${location.hostname}:${location.port}`);
 
 socket.onopen = () => {
   console.log('socket::open');
@@ -29,7 +30,7 @@ socket.onmessage = async ({ data }) => {
         const answer = await peerConnection.createAnswer();
         await peerConnection.setLocalDescription(answer);
 
-        sendSocketMessage('answer', { remoteId, answer }); 
+        sendSocketMessage('answer', { remoteId, answer });
         break;
       case 'answer':
         await peerConnection.setRemoteDescription(new RTCSessionDescription(jsonMessage.data.answer));
@@ -73,10 +74,10 @@ document.getElementById('downloadButton').addEventListener('click', async () => 
 });
 
 const call = async () => {
-  try {    
+  try {
     if (!remoteId) {
       alert('Please enter a remote id');
-      
+
       return;
     }
 
@@ -102,7 +103,7 @@ const stop = () => {
 };
 
 const initializePeerConnection = async (mediaTracks) => {
-  const config = { iceServers: [{ urls: [ 'stun:stun1.l.google.com:19302' ] } ] };
+  const config = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302'] }] };
   peerConnection = new RTCPeerConnection(config);
 
   peerConnection.onicecandidate = ({ candidate }) => {
@@ -143,9 +144,9 @@ const initializeDataChannelListeners = () => {
   dataChannel.onerror = (error) => console.error('dataChannel error:', error);
 
   dataChannel.onmessage = ({ data }) => {
-    
+
     let jsonData = JSON.parse(data);
-    switch(jsonData.type) {
+    switch (jsonData.type) {
       case "name":
         fileName = jsonData.data;
         break;
