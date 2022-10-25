@@ -1,15 +1,28 @@
 const express = require('express');
-const { WebSocketServer, OPEN } = require('ws');
+const { Server, OPEN } = require('ws');
+const path = require("path")
 
 const app = express();
 const PORT = process.env.PORT ?? 3000;
 
 // ==================== EXPRESS SERVER ====================
-app.use(express.static("../public"))
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/upload.html'));
+});
+// Serve javascript files
+app.get('/*.js', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/scripts' + req.originalUrl));
+});
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/download.html'));
+});
 
 // ==================== WEBSOCKET SIGNALIGN CLIENT ====================
+const wss = new Server({ server: app.listen(PORT) });
 
-const wss = new WebSocketServer({ server: app.listen(PORT) });
+wss.on("listening", () => {
+  console.log(`Server listening on ${PORT}`)
+})
 
 wss.on('connection', (socket) => {
   console.log('new connection');
@@ -67,6 +80,3 @@ const emitMessage = (socket, jsonMessage) => {
 const getSocketById = (socketId) =>
   Array.from(wss.clients).find((client => client.id === socketId));
 
-wsServer.listen(WEBSOCKET_PORT, () => {
-  console.log(`Websocket server listening on port ${WEBSOCKET_PORT}`);
-});
