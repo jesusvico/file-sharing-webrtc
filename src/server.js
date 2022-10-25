@@ -1,42 +1,15 @@
 const express = require('express');
-const https = require('https');
-const { readFileSync } = require('fs');
 const { WebSocketServer, OPEN } = require('ws');
-const path = require('path');
 
 const app = express();
-const WEB_PORT = 3000;
-const WEBSOCKET_PORT = 8888;
-
-// Certificate and key
-const serverCert = readFileSync(path.resolve(__dirname, './../ssl/cert.pem'));
-const serverKey = readFileSync(path.resolve(__dirname, './../ssl/cert.key'));
+const PORT = process.env.PORT ?? 3000;
 
 // ==================== EXPRESS SERVER ====================
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/upload.html'));
-});
-// Serve javascript files
-app.get('/*.js', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/scripts' + req.originalUrl));
-});
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../public/download.html'));
-});
-
-https.createServer({cert: serverCert, key: serverKey}, app)
-  .listen(WEB_PORT, () => {
-    console.log(`App server listening on port ${WEB_PORT}`);
-  });
+app.use(express.static("../public"))
 
 // ==================== WEBSOCKET SIGNALIGN CLIENT ====================
 
-const wsServer = https.createServer({
-  cert: serverCert,
-  key: serverKey
-});
-const wss = new WebSocketServer({ server: wsServer });
+const wss = new WebSocketServer({ server: app.listen(PORT) });
 
 wss.on('connection', (socket) => {
   console.log('new connection');
@@ -52,20 +25,20 @@ wss.on('connection', (socket) => {
   socket.once('close', () => {
     console.log('socket::close');
   });
-}); 
+});
 
 const handleJsonMessage = (socket, jsonMessage) => {
   switch (jsonMessage.action) {
     case 'start':
       console.log(jsonMessage);
       // If the message has not id it is not valid
-      if(!jsonMessage.data.id) return;
+      if (!jsonMessage.data.id) return;
       // If the id is already used it is not valid
-      if(getSocketById(jsonMessage.data.id)) return;
+      if (getSocketById(jsonMessage.data.id)) return;
       socket.id = jsonMessage.data.id
-      emitMessage(socket, { action: 'start', id: socket.id }); 
+      emitMessage(socket, { action: 'start', id: socket.id });
       break;
-    default: 
+    default:
       console.log('remote', jsonMessage.data.remoteId);
       if (!jsonMessage.data.remoteId) return;
 
