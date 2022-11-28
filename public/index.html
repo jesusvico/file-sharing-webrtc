@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/style.css">
+    <title>Chat</title>
+</head>
+<body>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    
+    <div id="drop-area"
+        ondragenter="dragEnterHandler(event);"
+        ondragover="dragOverHandler(event);"
+        ondragleave="dragLeaveHandler(event);"
+        ondrop="dropHandler(event);">
+
+        <p>Drag one file to this <i>drop zone</i>.</p>
+
+        <div id="file-list"></div>
+
+        <div style="display:flex; flex-direction: row; gap: 10px;">
+            <button disabled id="send-button">Send</button>
+            <button id="copy-clipboard">Copy to clipboard</button>
+        </div>
+
+        <a id="download-link" target="_blank"></a>
+
+        <div id="qrcode"></div>
+    </div>
+
+    <div id="status-bar">
+        <div id="progress"></div>
+    </div>
+
+    <script src="/index.js" ></script>
+    <script type="module" src="/p2p.js" ></script>
+</body>
+</html>

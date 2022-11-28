@@ -1,0 +1,67 @@
+* {
+    font-family: sans-serif;
+}
+
+/* DROP AREA */
+
+#drop-area {
+    margin: auto;
+    border: 2px solid rgb(205, 205, 205);
+    border-radius: 10px;
+    padding: 10px;
+    text-align: center;
+    transform: translateY(-50%);
+    margin-top: 50vh;
+    width: 95%;
+    max-width: 500px;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+#drop-area.highlight {
+    border-color: rgb(156, 156, 156);
+}
+
+/* FILE LIST */
+
+#file-list {
+    margin-bottom: auto;
+}
+
+#file-list .file {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#file-list .file img {
+    height: 50px;
+}
+
+#file-list .file p {
+    margin: 0px;
+}
+
+#copy-clipboard {
+    display: none;
+}
+
+/* STATUS BAR */
+#status-bar {
+    height: 25px;
+    width: 95%;
+    max-width: 500px;
+    margin: auto;
+    border: 1px solid rgb(0,0,0);
+    transform: translateY(-50%);
+    margin-top: 50vh;
+}
+
+#progress {
+    width: 1%;
+    height: 100%;
+    background-color: rgb(0, 119, 255);
+}

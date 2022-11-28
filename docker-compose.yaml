@@ -1,0 +1,23 @@
+version: "3"
+
+services:
+
+  chat_nginx:
+    container_name: chat_nginx
+    image: nginx
+    ports:
+      - $HTTP_PORT:80
+      - $HTTPS_PORT:443
+      - $WEBSOCKET_PORT:8080
+    volumes:
+      - ./nginx:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/certificate:ro
+      - ./public:/public:ro
+
+  chat_server:
+    container_name: chat_server
+    image: node
+    command: bash -c "cd /server && npm start"
+    volumes:
+      - ./server:/server:ro
+
